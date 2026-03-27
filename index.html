@@ -2065,6 +2065,63 @@
     function startGuide() {
         if (localStorage.getItem('guide_done')) return;
         
+        // 创建带箭头的提示框
+        function createTip(text, targetElement, position) {
+            const rect = targetElement.getBoundingClientRect();
+            
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: fixed;
+                background: var(--button-dark);
+                color: var(--card-bg);
+                padding: 8px 14px;
+                border-radius: 8px;
+                font-size: 0.75rem;
+                z-index: 1000;
+                white-space: nowrap;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            `;
+            
+            if (position === 'right') {
+                tip.style.left = rect.right + 12 + 'px';
+                tip.style.top = rect.top + (rect.height / 2) - 12 + 'px';
+                tip.innerHTML = `
+                    ${text}
+                    <div style="
+                        position: absolute;
+                        left: -6px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 0;
+                        height: 0;
+                        border-top: 6px solid transparent;
+                        border-bottom: 6px solid transparent;
+                        border-right: 6px solid var(--button-dark);
+                    "></div>
+                `;
+            } else if (position === 'bottom') {
+                tip.style.left = rect.left + (rect.width / 2) - 40 + 'px';
+                tip.style.top = rect.bottom + 12 + 'px';
+                tip.innerHTML = `
+                    ${text}
+                    <div style="
+                        position: absolute;
+                        top: -6px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 0;
+                        height: 0;
+                        border-left: 6px solid transparent;
+                        border-right: 6px solid transparent;
+                        border-bottom: 6px solid var(--button-dark);
+                    "></div>
+                `;
+            }
+            
+            document.body.appendChild(tip);
+            return tip;
+        }
+        
         function step1() {
             const packBtn = document.querySelector('.pack-btn');
             if (!packBtn) return;
@@ -2072,21 +2129,7 @@
             packBtn.style.transition = 'all 0.3s';
             packBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
             
-            const tip = document.createElement('div');
-            tip.style.cssText = `
-                position: absolute;
-                background: var(--button-dark);
-                color: var(--card-bg);
-                padding: 6px 12px;
-                border-radius: 30px;
-                font-size: 0.7rem;
-                margin-top: 32px;
-                white-space: nowrap;
-                z-index: 100;
-            `;
-            tip.innerText = '点击这里加载单词';
-            packBtn.parentElement.style.position = 'relative';
-            packBtn.parentElement.appendChild(tip);
+            const tip = createTip('点击这里加载单词', packBtn, 'right');
             
             const clickHandler = () => {
                 packBtn.style.boxShadow = '';
@@ -2104,20 +2147,7 @@
             randomBtn.style.transition = 'all 0.3s';
             randomBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
             
-            const tip = document.createElement('div');
-            tip.style.cssText = `
-                position: absolute;
-                background: var(--button-dark);
-                color: var(--card-bg);
-                padding: 6px 12px;
-                border-radius: 30px;
-                font-size: 0.7rem;
-                margin-top: 40px;
-                white-space: nowrap;
-            `;
-            tip.innerText = '点击这里开始学习';
-            randomBtn.parentElement.style.position = 'relative';
-            randomBtn.parentElement.appendChild(tip);
+            const tip = createTip('点击这里开始学习', randomBtn, 'bottom');
             
             const clickHandler = () => {
                 randomBtn.style.boxShadow = '';
@@ -2135,20 +2165,7 @@
             revealBtn.style.transition = 'all 0.3s';
             revealBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
             
-            const tip = document.createElement('div');
-            tip.style.cssText = `
-                position: absolute;
-                background: var(--button-dark);
-                color: var(--card-bg);
-                padding: 6px 12px;
-                border-radius: 30px;
-                font-size: 0.7rem;
-                margin-top: 40px;
-                white-space: nowrap;
-            `;
-            tip.innerText = '点击这里查看释义';
-            revealBtn.parentElement.style.position = 'relative';
-            revealBtn.parentElement.appendChild(tip);
+            const tip = createTip('点击这里查看释义', revealBtn, 'bottom');
             
             const clickHandler = () => {
                 revealBtn.style.boxShadow = '';
