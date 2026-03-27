@@ -2061,6 +2061,155 @@
     }
 
     init();
+        // ==================== 新手引导 ====================
+    function startGuide() {
+        if (localStorage.getItem('guide_done')) return;
+        
+        function step1() {
+            const packBtn = document.querySelector('.pack-btn');
+            if (!packBtn) return;
+            
+            packBtn.style.transition = 'all 0.3s';
+            packBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
+            
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: absolute;
+                background: var(--button-dark);
+                color: var(--card-bg);
+                padding: 6px 12px;
+                border-radius: 30px;
+                font-size: 0.7rem;
+                margin-top: 32px;
+                white-space: nowrap;
+                z-index: 100;
+            `;
+            tip.innerText = '点击这里加载单词';
+            packBtn.parentElement.style.position = 'relative';
+            packBtn.parentElement.appendChild(tip);
+            
+            const clickHandler = () => {
+                packBtn.style.boxShadow = '';
+                tip.remove();
+                packBtn.removeEventListener('click', clickHandler);
+                setTimeout(() => step2(), 500);
+            };
+            packBtn.addEventListener('click', clickHandler);
+        }
+        
+        function step2() {
+            const randomBtn = document.getElementById('randomBtn');
+            if (!randomBtn) return;
+            
+            randomBtn.style.transition = 'all 0.3s';
+            randomBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
+            
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: absolute;
+                background: var(--button-dark);
+                color: var(--card-bg);
+                padding: 6px 12px;
+                border-radius: 30px;
+                font-size: 0.7rem;
+                margin-top: 40px;
+                white-space: nowrap;
+            `;
+            tip.innerText = '点击这里开始学习';
+            randomBtn.parentElement.style.position = 'relative';
+            randomBtn.parentElement.appendChild(tip);
+            
+            const clickHandler = () => {
+                randomBtn.style.boxShadow = '';
+                tip.remove();
+                randomBtn.removeEventListener('click', clickHandler);
+                setTimeout(() => step3(), 500);
+            };
+            randomBtn.addEventListener('click', clickHandler);
+        }
+        
+        function step3() {
+            const revealBtn = document.getElementById('revealMeaningBtn');
+            if (!revealBtn) return;
+            
+            revealBtn.style.transition = 'all 0.3s';
+            revealBtn.style.boxShadow = '0 0 0 3px var(--button-mid)';
+            
+            const tip = document.createElement('div');
+            tip.style.cssText = `
+                position: absolute;
+                background: var(--button-dark);
+                color: var(--card-bg);
+                padding: 6px 12px;
+                border-radius: 30px;
+                font-size: 0.7rem;
+                margin-top: 40px;
+                white-space: nowrap;
+            `;
+            tip.innerText = '点击这里查看释义';
+            revealBtn.parentElement.style.position = 'relative';
+            revealBtn.parentElement.appendChild(tip);
+            
+            const clickHandler = () => {
+                revealBtn.style.boxShadow = '';
+                tip.remove();
+                revealBtn.removeEventListener('click', clickHandler);
+                setTimeout(() => step4(), 500);
+            };
+            revealBtn.addEventListener('click', clickHandler);
+        }
+        
+        function step4() {
+            setTimeout(() => {
+                const tip = document.createElement('div');
+                tip.style.cssText = `
+                    position: fixed;
+                    bottom: 80px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--button-dark);
+                    color: var(--card-bg);
+                    padding: 10px 20px;
+                    border-radius: 40px;
+                    font-size: 0.8rem;
+                    z-index: 9999;
+                    white-space: nowrap;
+                `;
+                tip.innerText = '点击「答对了」或「答错了」完成自测';
+                document.body.appendChild(tip);
+                
+                setTimeout(() => tip.remove(), 5000);
+                localStorage.setItem('guide_done', 'true');
+            }, 800);
+        }
+        
+        if (vocabulary.length === 0) {
+            setTimeout(step1, 1000);
+        } else {
+            step2();
+        }
+    }
+    
+    function initGuide() {
+        const guideShown = localStorage.getItem(GUIDE_KEY);
+        if (!guideShown) {
+            const checkGuideModal = setInterval(() => {
+                const modal = document.querySelector('.guide-modal');
+                if (!modal) {
+                    clearInterval(checkGuideModal);
+                    setTimeout(startGuide, 500);
+                }
+            }, 200);
+        } else {
+            setTimeout(startGuide, 1000);
+        }
+    }
+    
+    initGuide();
+
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
