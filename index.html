@@ -785,6 +785,31 @@
             .add-pack-input { flex-direction: column; }
             .guide-modal { padding: 0.6rem; max-width: 360px; }
             .progress-badge { font-size: 0.6rem; top: 8px; right: 10px; }
+        }        /* 星星动画 */
+        .star-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            animation: starBurst 0.6s ease forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes starBurst {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.8);
+            }
         }
     </style>
 </head>
