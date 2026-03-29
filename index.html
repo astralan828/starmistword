@@ -748,6 +748,36 @@
             font-size: 0.7rem;
         }
 
+        /* 炸弹动画 */
+        .bomb-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            animation: bombExplode 0.6s ease forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes bombExplode {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2) rotate(20deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(-10deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(2) rotate(0deg);
+            }
+        }
+
         @media (max-width: 640px) {
             body { padding: 1rem; }
             .inner-panel { padding: 1rem; }
@@ -1098,7 +1128,7 @@
                 </div>
                 <div class="guide-section">
                     <div class="guide-section-title">学习模式</div>
-                    <div class="guide-section-text">1. 点击「随机单词」或按空格键抽取单词<br>2. 查看单词和例句，思考释义<br>3. 按「R键」或点击「显示释义」查看答案<br>4. 按「C键」或「W键」自测：答对得星星动画，答错自动加入错题本<br>5. 一轮学完后会弹出完成提示</div>
+                    <div class="guide-section-text">1. 点击「随机单词」或按空格键抽取单词<br>2. 查看单词和例句，思考释义<br>3. 按「R键」或点击「显示释义」查看答案<br>4. 按「C键」或「W键」自测<br>5. 一轮学完后会弹出完成提示</div>
                 </div>
                 <div class="guide-shortcuts">
                     <p>快捷键</p>
@@ -1124,7 +1154,6 @@
                 localStorage.setItem(GUIDE_KEY, 'true');
             }
             modal.remove();
-            // 关闭用户指南后启动新手引导
             setTimeout(() => {
                 if (typeof startGuide === 'function') startGuide();
             }, 500);
@@ -1141,6 +1170,24 @@
                 }, 500);
             }
         });
+    }
+
+    // ==================== 炸弹特效 ====================
+    function showBombAnimation() {
+        const bomb = document.createElement('div');
+        bomb.className = 'bomb-animation';
+        bomb.innerHTML = '💣 💥 💣';
+        document.body.appendChild(bomb);
+        setTimeout(() => bomb.remove(), 600);
+    }
+
+    // ==================== 星星动画 ====================
+    function showStarAnimation() {
+        const star = document.createElement('div');
+        star.className = 'star-animation';
+        star.innerHTML = '⭐ ✨ ⭐';
+        document.body.appendChild(star);
+        setTimeout(() => star.remove(), 600);
     }
 
     // ==================== 新手引导 ====================
@@ -1181,7 +1228,6 @@
                         btn.style.boxShadow = '';
                         tip.remove();
                         btn.removeEventListener('click', handler);
-                        // 等待词库加载
                         let checkCount = 0;
                         const checkTimer = setInterval(() => {
                             if (vocabulary.length > 0) {
@@ -1556,6 +1602,7 @@
             wrongBook.push({ ...wordObj, addedTime: new Date().toLocaleString() });
             saveWrongBook();
             showFeedback(`"${wordObj.word}" 已加入错题本`, 'var(--text-mid)');
+            showBombAnimation();
         } else {
             showFeedback(`"${wordObj.word}" 已在错题本中`, 'var(--text-light)');
         }
@@ -1650,14 +1697,6 @@
     }
 
     // ==================== 答题反馈 ====================
-    function showStarAnimation() {
-        const star = document.createElement('div');
-        star.className = 'star-animation';
-        star.innerHTML = '⭐ ✨ ⭐';
-        document.body.appendChild(star);
-        setTimeout(() => star.remove(), 600);
-    }
-
     function onCorrect() {
         showStarAnimation();
         showFeedback('太棒了！星星送给你', 'var(--button-dark)');
@@ -1666,7 +1705,9 @@
     }
 
     function onWrong() {
-        if (currentWordObj) addToWrongBook(currentWordObj);
+        if (currentWordObj) {
+            addToWrongBook(currentWordObj);
+        }
         feedbackArea.style.display = 'none';
         setTimeout(() => showRandomWord(), 300);
     }
